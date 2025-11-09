@@ -171,9 +171,9 @@
                 class="cursor-pointer hover:bg-primary-50 active:bg-primary-100 transition-colors"
                 :title="`點擊複製: ${generateCopyText(row, copyMode)}`"
               >
-                <td class="font-medium">{{ row.display_zh }}</td>
-                <td class="text-gray-700">{{ row.term_en }}</td>
-                <td class="text-gray-600 text-xs">{{ row.notes }}</td>
+                <td class="font-medium w-1/5">{{ row.display_zh }}</td>
+                <td class="text-gray-700 w-1/5">{{ row.term_en }}</td>
+                <td class="text-gray-600 text-xs w-3/5">{{ row.notes }}</td>
               </tr>
               <tr v-if="filteredData.length === 0">
                 <td colspan="4" class="text-center py-8 text-gray-500">
