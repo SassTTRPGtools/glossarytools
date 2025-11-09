@@ -163,3 +163,27 @@ body {
 .animate-bounce-in {
   animation: bounce-in 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
 }
+
+/* Modal 動畫 */
+.modal-enter-active,
+.modal-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.modal-enter-active > div,
+.modal-leave-active > div {
+  transition: all 0.3s ease;
+}
+
+.modal-enter-from,
+.modal-leave-to {
+  opacity: 0;
+}
+
+.modal-enter-from > div {
+  transform: scale(0.9) translateY(-20px);
+}
+
+.modal-leave-to > div {
+  transform: scale(0.9) translateY(20px);
+}

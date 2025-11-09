@@ -145,8 +145,10 @@ export function getRecentSources() {
 
 /**
  * 儲存最近使用的資料來源到 localStorage
+ * @param {string} url - 資料來源 URL
+ * @param {string} [customLabel] - 自訂標籤（可選），如果提供則使用此標籤
  */
-export function saveRecentSource(url) {
+export function saveRecentSource(url, customLabel = null) {
   try {
     let sources = getRecentSources();
     
@@ -157,7 +159,7 @@ export function saveRecentSource(url) {
     sources.unshift({
       url,
       timestamp: Date.now(),
-      label: extractLabelFromURL(url)
+      label: customLabel || extractLabelFromURL(url)
     });
     
     // 只保留最近 5 筆

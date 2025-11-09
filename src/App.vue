@@ -45,17 +45,31 @@
           </div>
 
           <!-- 最近使用 -->
-          <div v-if="recentSources.length > 0" class="flex flex-wrap gap-2">
-            <span class="text-sm text-gray-600">最近使用：</span>
-            <button
-              v-for="source in recentSources"
-              :key="source.url"
-              @click="loadFromRecent(source.url)"
-              class="text-xs bg-gray-100 hover:bg-gray-200 px-3 py-1 rounded-full transition-colors"
-              :title="source.url"
-            >
-              {{ source.label }} · {{ formatDateTime(source.timestamp) }}
-            </button>
+          <div v-if="recentSources.length > 0" class="space-y-2">
+            <div class="flex items-center gap-2">
+              <span class="text-sm font-medium text-gray-700">最近使用</span>
+              <button
+                @click="openEditModal()"
+                class="text-xs text-blue-600 hover:text-blue-800 flex items-center gap-1 transition-colors"
+                title="編輯來源名稱"
+              >
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                </svg>
+                <span>編輯</span>
+              </button>
+            </div>
+            <div class="flex flex-wrap gap-2">
+              <button
+                v-for="source in recentSources"
+                :key="source.url"
+                @click="loadFromRecent(source.url)"
+                class="text-xs bg-gray-100 hover:bg-blue-50 hover:text-blue-700 px-3 py-1.5 rounded-full transition-colors border border-transparent hover:border-blue-200"
+                :title="source.url"
+              >
+                {{ source.label }} · {{ formatDateTime(source.timestamp) }}
+              </button>
+            </div>
           </div>
 
           <!-- 檔案上傳 -->
@@ -260,6 +274,94 @@
       </div>
     </transition>
 
+    <!-- 名稱編輯 Modal -->
+    <transition name="modal">
+      <div 
+        v-if="showNameModal" 
+        class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
+        @click.self="closeNameModal"
+      >
+        <div class="bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+          <!-- Modal Header -->
+          <div class="sticky top-0 bg-white border-b px-6 py-4 flex items-center justify-between">
+            <h3 class="text-xl font-bold text-gray-900">
+              編輯最近使用的來源
+            </h3>
+            <button
+              @click="closeNameModal"
+              class="text-gray-400 hover:text-gray-600 text-2xl leading-none"
+            >
+              ×
+            </button>
+          </div>
+
+          <!-- Modal Body -->
+          <div class="px-6 py-4">
+            <div class="space-y-3">
+              <div
+                v-for="(source, index) in recentSources"
+                :key="source.url"
+                class="border rounded-lg p-4 hover:border-blue-300 transition-colors"
+              >
+                <div class="space-y-2">
+                  <div>
+                    <label class="block text-xs font-medium text-gray-600 mb-1">
+                      來源名稱
+                    </label>
+                    <input
+                      v-model="source.label"
+                      type="text"
+                      class="input-field text-sm"
+                      placeholder="輸入來源名稱..."
+                    />
+                  </div>
+                  <div>
+                    <label class="block text-xs font-medium text-gray-600 mb-1">
+                      資料來源 URL
+                    </label>
+                    <input
+                      :value="source.url"
+                      type="text"
+                      class="input-field text-xs bg-gray-50 font-mono"
+                      readonly
+                    />
+                  </div>
+                  <div class="flex items-center justify-between text-xs text-gray-500 pt-1">
+                    <span>上次使用：{{ formatDateTime(source.timestamp) }}</span>
+                    <button
+                      @click="deleteRecentSource(index)"
+                      class="text-red-600 hover:text-red-700 font-medium flex items-center gap-1"
+                    >
+                      <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                      </svg>
+                      <span>刪除</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Modal Footer -->
+          <div class="sticky bottom-0 bg-gray-50 px-6 py-4 flex gap-3 justify-end border-t">
+            <button
+              @click="closeNameModal"
+              class="btn-secondary"
+            >
+              取消
+            </button>
+            <button
+              @click="saveEditedSources"
+              class="btn-primary"
+            >
+              儲存變更
+            </button>
+          </div>
+        </div>
+      </div>
+    </transition>
+
     <!-- 頁尾 -->
     <footer class="max-w-7xl mx-auto mt-12 text-center text-sm text-gray-500">
       <p>Glossary Tools © 2025 · 無需後端，安全保護隱私</p>
@@ -296,6 +398,7 @@ const currentPage = ref(1)
 const itemsPerPage = ref(50)
 const showCopyToast = ref(false)
 const copiedText = ref('')
+const showNameModal = ref(false)
 
 // Fuse.js 搜尋實例
 let fuseInstance = null
@@ -417,7 +520,19 @@ async function loadDataFromURL() {
       complete: (results) => {
         console.log('解析結果:', results)
         processCSVData(results.data)
-        saveRecentSource(dataUrl.value)
+        
+        // 檢查是否已存在於最近使用中
+        const existingSource = recentSources.value.find(s => s.url === dataUrl.value)
+        
+        if (existingSource) {
+          // 如果已存在，保留原有名稱並更新時間戳
+          saveRecentSource(dataUrl.value, existingSource.label)
+        } else {
+          // 如果是新來源，自動提取名稱
+          const displayName = extractDisplayName(results.data)
+          saveRecentSource(dataUrl.value, displayName)
+        }
+        
         recentSources.value = getRecentSources()
       },
       error: (error) => {
@@ -512,6 +627,56 @@ async function copyRow(row) {
 // 清除搜尋
 function clearSearch() {
   searchQuery.value = ''
+}
+
+// 從 CSV 資料中提取顯示名稱
+function extractDisplayName(rawData) {
+  if (!rawData || rawData.length === 0) {
+    return 'Google Sheets'
+  }
+  
+  // 嘗試從第一列找到有效的中文詞彙
+  for (let row of rawData.slice(0, 10)) { // 檢查前 10 列
+    if (row && row.length > 0) {
+      const firstCol = String(row[0]).trim()
+      // 檢查是否包含中文字符且長度合理
+      if (firstCol && /[\u4e00-\u9fa5]/.test(firstCol) && firstCol.length > 1 && firstCol.length < 30) {
+        return `${firstCol}...` // 使用第一個中文詞彙加省略號
+      }
+    }
+  }
+  
+  return 'Google Sheets'
+}
+
+// 開啟編輯 Modal
+function openEditModal() {
+  showNameModal.value = true
+}
+
+// 關閉 Modal
+function closeNameModal() {
+  showNameModal.value = false
+}
+
+// 儲存編輯後的來源
+function saveEditedSources() {
+  // 直接更新 localStorage
+  localStorage.setItem('recentSources', JSON.stringify(recentSources.value))
+  closeNameModal()
+  showStatus('已更新來源名稱', 'success', 3000)
+}
+
+// 刪除最近來源
+function deleteRecentSource(index) {
+  if (confirm('確定要刪除這個來源嗎？')) {
+    recentSources.value.splice(index, 1)
+    localStorage.setItem('recentSources', JSON.stringify(recentSources.value))
+    
+    if (recentSources.value.length === 0) {
+      closeNameModal()
+    }
+  }
 }
 
 // 顯示狀態訊息
