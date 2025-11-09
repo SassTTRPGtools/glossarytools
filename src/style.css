@@ -1,0 +1,165 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* 自訂樣式 */
+body {
+  @apply bg-gray-50 text-gray-800;
+}
+
+/* 捲動條樣式 */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-gray-100;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-gray-400 rounded;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-gray-500;
+}
+
+/* 按鈕動畫 */
+.btn-primary {
+  @apply bg-primary-600 text-white px-4 py-2 rounded-lg shadow hover:bg-primary-700 transition-all duration-200 font-medium;
+}
+
+.btn-secondary {
+  @apply bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300 transition-all duration-200 font-medium;
+}
+
+.btn-sm {
+  @apply px-3 py-1 text-sm;
+}
+
+/* 輸入框樣式 */
+.input-field {
+  @apply w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all;
+}
+
+/* 卡片樣式 */
+.card {
+  @apply bg-white rounded-lg shadow-sm border border-gray-200 p-4;
+}
+
+/* 載入動畫 */
+.loading-spinner {
+  border: 3px solid rgba(0, 0, 0, 0.1);
+  border-left-color: #0ea5e9;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* 淡入動畫 */
+.fade-in {
+  animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 表格樣式 */
+.glossary-table {
+  @apply w-full;
+}
+
+.glossary-table thead {
+  @apply bg-gray-100 sticky top-0;
+}
+
+.glossary-table th {
+  @apply px-4 py-3 text-left text-sm font-semibold text-gray-700;
+}
+
+.glossary-table td {
+  @apply px-4 py-3 text-sm border-b border-gray-200;
+}
+
+.glossary-table tbody tr {
+  @apply hover:bg-gray-50 transition-colors duration-150;
+}
+
+/* 緊湊表格樣式 */
+.glossary-table.compact th {
+  @apply px-3 py-2 text-xs;
+}
+
+.glossary-table.compact td {
+  @apply px-3 py-2 text-sm;
+}
+
+.glossary-table.compact tbody tr {
+  @apply border-b border-gray-100;
+}
+
+/* 響應式調整 */
+@media (max-width: 640px) {
+  .glossary-table th,
+  .glossary-table td {
+    @apply px-2 py-2 text-xs;
+  }
+  
+  .glossary-table.compact th,
+  .glossary-table.compact td {
+    @apply px-2 py-1.5 text-xs;
+  }
+}
+
+/* Toast 動畫 */
+.toast-enter-active,
+.toast-leave-active {
+  transition: all 0.3s ease;
+}
+
+.toast-enter-from {
+  opacity: 0;
+  transform: translate(-50%, -100%);
+}
+
+.toast-leave-to {
+  opacity: 0;
+  transform: translate(-50%, -20px);
+}
+
+@keyframes bounce-in {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -100px) scale(0.3);
+  }
+  50% {
+    opacity: 1;
+    transform: translate(-50%, 10px) scale(1.05);
+  }
+  70% {
+    transform: translate(-50%, -5px) scale(0.95);
+  }
+  100% {
+    transform: translate(-50%, 0) scale(1);
+  }
+}
+
+.animate-bounce-in {
+  animation: bounce-in 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
