@@ -226,6 +226,17 @@
         <div class="mt-4 p-3 bg-white rounded border border-blue-200">
           <p class="text-xs text-blue-700 font-medium mb-2">📊 資料格式要求：</p>
           <p class="text-xs text-blue-600 mb-3">CSV 檔案需包含三欄：中文 | 英文 | 備註</p>
+          <div class="flex items-center gap-2 mb-3">
+            <a 
+              href="examples/sample.csv" 
+              download="glossary-sample.csv"
+              class="inline-flex items-center gap-1 text-xs bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded transition-colors"
+            >
+              <span>📥</span>
+              <span>下載範例檔案</span>
+            </a>
+            <span class="text-xs text-blue-600">（包含 20 筆範例資料）</span>
+          </div>
           <p class="text-xs text-blue-700 font-medium mb-1">⚠️ 重要：</p>
           <p class="text-xs text-blue-600">僅支援公開發佈的 Google Sheets（私人連結無法使用）</p>
         </div>
